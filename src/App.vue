@@ -8,7 +8,7 @@
       </div>
 
       <!-- Список пациентов -->
-      <div class="col-12 lg:col-4 md:col-5 mb-3">
+      <div class="col-12 lg:col-4 md:col-5 mb-3" v-if="!isMobile || !showPlans">
         <Card>
           <template #header>
             <div class="flex align-items-center justify-content-center mb-3">
@@ -37,19 +37,11 @@
       </div>
 
       <!-- Планы лечения -->
-      <div class="col-12 lg:col-8 md:col-7" v-if="showPlans && selectedPatient">
+      <div class="col-12 lg:col-8 md:col-7" v-if="showPlans && selectedPatient" :class="{'full-width': isMobile}">
         <Card>
           <template #header>
             <div class="patient-header">
-              <div class="flex align-items-center mb-2">
-                <Button 
-                  icon="pi pi-arrow-left" 
-                  class="p-button-text p-button-rounded back-button" 
-                  @click="showPlans = false" 
-                  aria-label="Назад к списку"
-                />
-                <h2 class="m-0 patient-name-header">{{ selectedPatient.fullName }}</h2>
-              </div>
+              <h2 class="m-0 patient-name-header">{{ selectedPatient.fullName }}</h2>
             </div>
           </template>
           <template #content>
@@ -346,6 +338,11 @@ li {
   padding: 2rem;
   color: #666;
   text-align: center;
+}
+
+
+.full-width {
+  width: 100%;
 }
 
 /* Адаптивные стили */
