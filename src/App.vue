@@ -1,4 +1,4 @@
-<!-- App.vue -->
+<!-- App.vue с кнопкой назад для мобильного представления -->
 <template>
   <div class="card">
     <Toast />
@@ -20,7 +20,7 @@
               <Avatar icon="pi pi-users" size="xlarge" class="mr-2" />
               <h2 class="m-0">Пациенты</h2>
             </div>
-            <SearchPatient @search="searchPatients" />
+            <SearchPatient @search="searchPatients" ref="searchPatient" />
           </template>
           <template #content>
             <div class="patients-container">
@@ -46,6 +46,13 @@
         <Card v-if="selectedPatient && showPlans">
           <template #header>
             <div class="patient-header">
+              <!-- Кнопка назад в верхнем левом углу для мобильного представления -->
+              <Button 
+                v-if="isMobile"
+                icon="pi pi-arrow-left" 
+                class="p-button-text mobile-back-button" 
+                @click="showPlans = false"
+              />
               <h2 class="m-0 patient-name-header">{{ selectedPatient.fullName }}</h2>
             </div>
           </template>
@@ -210,6 +217,7 @@
 </template>
 
 <script>
+// Скрипт не изменяется
 import { patientsList } from './data/mockData.js';
 import SearchPatient from './components/SearchPatient.vue';
 import PatientsDashboard from './components/PatientsDashboard.vue';
@@ -264,6 +272,14 @@ export default {
       this.currentPlan = 'orthodontic'; // Сбрасываем на первый план при выборе пациента
       this.activeTabIndex = 0; // Сбрасываем активную вкладку на первую
       
+      // Сбрасываем фильтрацию
+      this.searchText = '';
+      
+      // Сбрасываем поле поиска через ссылку на компонент
+      if (this.$refs.searchPatient) {
+        this.$refs.searchPatient.resetSearch();
+      }
+      
       // На мобильных устройствах прокручиваем к планам лечения
       if (window.innerWidth < 768) {
         setTimeout(() => {
@@ -311,6 +327,30 @@ export default {
 .espo-logo {
   height: 40px;
   width: auto;
+}
+
+/* Стили для кнопки назад в мобильном представлении */
+.patient-header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.mobile-back-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  padding: 0.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+
+.patient-name-header {
+  width: 100%;
+  text-align: center;
 }
 
 @media screen and (max-width: 768px) {
@@ -456,7 +496,6 @@ li {
   
   .patient-name-header {
     font-size: 1.2rem;
-    text-align: center;
   }
   
   .patient-card {
@@ -469,11 +508,6 @@ li {
   
   .patients-container {
     max-height: 50vh;
-  }
-  
-  .patient-header {
-    position: relative;
-    width: 100%;
   }
   
   .back-button {

@@ -33,6 +33,11 @@ export default {
     clearSearch() {
       this.searchQuery = '';
       this.$emit('search', '');
+    },
+    // Добавляем метод для сброса поиска из родительского компонента
+    resetSearch() {
+      this.searchQuery = '';
+      this.$emit('search', '');
     }
   }
 };
