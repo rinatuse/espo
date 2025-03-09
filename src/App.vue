@@ -117,10 +117,22 @@
               </div>
             </div>
             
-            <!-- Десктопное представление с табами -->
-            <TabView v-else>
-              <TabPanel header="Ортодонтический план">
-                <div class="plan-content">
+            <!-- Десктопное представление с кастомными табами -->
+            <div v-else>
+              <div class="custom-tabs">
+                <div 
+                  v-for="(tab, index) in tabItems" 
+                  :key="index"
+                  :class="['custom-tab', { 'custom-tab-active': activeTabIndex === index }]"
+                  @click="activeTabIndex = index"
+                >
+                  {{ tab.label }}
+                </div>
+              </div>
+              
+              <div class="tab-content-wrapper">
+                <!-- Ортодонтический план -->
+                <div v-if="activeTabIndex === 0" class="plan-content">
                   <h3>Ортодонтический план лечения</h3>
                   <div v-for="(stage, index) in selectedPatient.plans.orthodontic" :key="index">
                     <h4>{{ stage.title }}</h4>
@@ -131,10 +143,9 @@
                     </ul>
                   </div>
                 </div>
-              </TabPanel>
-
-              <TabPanel header="Ортопедический план">
-                <div class="plan-content">
+                
+                <!-- Ортопедический план -->
+                <div v-if="activeTabIndex === 1" class="plan-content">
                   <h3>Ортопедический план лечения</h3>
                   <div v-for="(stage, index) in selectedPatient.plans.orthopedic" :key="index">
                     <h4>{{ stage.title }}</h4>
@@ -145,10 +156,9 @@
                     </ul>
                   </div>
                 </div>
-              </TabPanel>
-
-              <TabPanel header="Терапевтический план">
-                <div class="plan-content">
+                
+                <!-- Терапевтический план -->
+                <div v-if="activeTabIndex === 2" class="plan-content">
                   <h3>Терапевтический план лечения</h3>
                   <div v-for="(stage, index) in selectedPatient.plans.therapeutic" :key="index">
                     <h4>{{ stage.title }}</h4>
@@ -159,10 +169,9 @@
                     </ul>
                   </div>
                 </div>
-              </TabPanel>
-
-              <TabPanel header="Хирургический план">
-                <div class="plan-content">
+                
+                <!-- Хирургический план -->
+                <div v-if="activeTabIndex === 3" class="plan-content">
                   <h3>Хирургический план лечения</h3>
                   <div v-for="(stage, index) in selectedPatient.plans.surgical" :key="index">
                     <h4>{{ stage.title }}</h4>
@@ -173,8 +182,8 @@
                     </ul>
                   </div>
                 </div>
-              </TabPanel>
-            </TabView>
+              </div>
+            </div>
           </template>
         </Card>
       </div>
@@ -198,6 +207,13 @@ export default {
       searchText: '',
       isMobile: false,
       currentPlan: 'orthodontic',
+      activeTabIndex: 0,
+      tabItems: [
+        { label: 'Ортодонтический план', value: 'orthodontic' },
+        { label: 'Ортопедический план', value: 'orthopedic' },
+        { label: 'Терапевтический план', value: 'therapeutic' },
+        { label: 'Хирургический план', value: 'surgical' }
+      ],
       planTypes: ['orthodontic', 'orthopedic', 'therapeutic', 'surgical'],
       planLabels: {
         orthodontic: 'Ортодонтический',
@@ -226,6 +242,7 @@ export default {
       this.selectedPatient = patient;
       this.showPlans = true;
       this.currentPlan = 'orthodontic'; // Сбрасываем на первый план при выборе пациента
+      this.activeTabIndex = 0; // Сбрасываем активную вкладку на первую
       
       // На мобильных устройствах прокручиваем к планам лечения
       if (window.innerWidth < 768) {
@@ -340,9 +357,46 @@ li {
   text-align: center;
 }
 
-
 .full-width {
   width: 100%;
+}
+
+/* Стили для кастомных вкладок */
+.custom-tabs {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.custom-tab {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 0.25rem;
+  border: 1px solid #dee2e6;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background-color: #f8f9fa;
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.custom-tab:hover {
+  background-color: #e9ecef;
+}
+
+.custom-tab-active {
+  background-color: #2196F3;
+  color: white;
+  border-color: #2196F3;
+  border-bottom: none;
+}
+
+.tab-content-wrapper {
+  border: 1px solid #dee2e6;
+  border-top: none;
+  padding: 1rem;
+  border-radius: 0 0 4px 4px;
 }
 
 /* Адаптивные стили */
@@ -402,18 +456,17 @@ li {
     margin-top: 1.5rem;
   }
   
-  /* Оптимизация вкладок для мобильных */
-  :deep(.p-tabview-nav) {
-    display: flex;
+  /* Адаптация кастомных вкладок для мобильных устройств */
+  .custom-tabs {
     flex-wrap: wrap;
   }
   
-  :deep(.p-tabview-nav li) {
-    margin-bottom: 0.5rem;
-  }
-  
-  :deep(.p-tabview-title) {
+  .custom-tab {
+    flex: 1 1 auto;
     font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+    text-align: center;
   }
 }
 
@@ -431,9 +484,9 @@ li {
     font-size: 1.1rem;
   }
   
-  :deep(.p-tabview-title) {
+  .custom-tab {
     font-size: 0.8rem;
-    white-space: nowrap;
+    padding: 0.5rem;
   }
 }
 </style>
