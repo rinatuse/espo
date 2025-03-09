@@ -36,9 +36,9 @@
         </Card>
       </div>
 
-      <!-- Планы лечения -->
-      <div class="col-12 lg:col-8 md:col-7" v-if="showPlans && selectedPatient" :class="{'full-width': isMobile}">
-        <Card>
+      <!-- Планы лечения или дашборд -->
+      <div class="col-12 lg:col-8 md:col-7" v-if="!isMobile || showPlans">
+        <Card v-if="selectedPatient && showPlans">
           <template #header>
             <div class="patient-header">
               <h2 class="m-0 patient-name-header">{{ selectedPatient.fullName }}</h2>
@@ -186,6 +186,19 @@
             </div>
           </template>
         </Card>
+        
+        <!-- Дашборд статистики, если пациент не выбран -->
+        <Card v-else>
+          <template #header>
+            <div class="flex align-items-center justify-content-center mb-3">
+              <Avatar icon="pi pi-chart-bar" size="xlarge" class="mr-2" />
+              <h2 class="m-0">Статистика</h2>
+            </div>
+          </template>
+          <template #content>
+            <PatientsDashboard />
+          </template>
+        </Card>
       </div>
     </div>
   </div>
@@ -194,10 +207,12 @@
 <script>
 import { patientsList } from './data/mockData.js';
 import SearchPatient from './components/SearchPatient.vue';
+import PatientsDashboard from './components/PatientsDashboard.vue';
 
 export default {
   components: {
-    SearchPatient
+    SearchPatient,
+    PatientsDashboard
   },
   data() {
     return {
@@ -488,5 +503,68 @@ li {
     font-size: 0.8rem;
     padding: 0.5rem;
   }
+}
+
+/* Стили для компонента статистики */
+.statistic-card {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.statistic-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statistic-icon {
+  font-size: 2rem;
+  color: #2196F3;
+  margin-right: 1rem;
+}
+
+.statistic-content {
+  flex: 1;
+}
+
+.statistic-title {
+  color: #757575;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.statistic-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #212121;
+}
+
+.section-title {
+  color: #424242;
+  margin: 1.5rem 0 1rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.treatment-stat-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.2rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  height: 100%;
+  border-top: 4px solid #ccc;
+}
+
+.treatment-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
