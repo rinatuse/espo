@@ -4,7 +4,12 @@
     <Toast />
     <div class="grid">
       <div class="col-12">
-        <h1 class="text-center app-title">Медицинская информационная система</h1>
+        <div class="header-container">
+          <div class="logo-wrapper">
+            <img src="../src/assets/espo.jpg" alt="ESPO Logo" class="espo-logo" />
+          </div>
+          <h1 class="app-title">Медицинская информационная система</h1>
+        </div>
       </div>
 
       <!-- Список пациентов -->
@@ -290,6 +295,35 @@ export default {
 </script>
 
 <style>
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.espo-logo {
+  height: 40px;
+  width: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+  }
+  
+  .espo-logo {
+    height: 30px;
+    margin-bottom: 0.5rem;
+  }
+}
+
 .patients-container {
   max-height: 70vh;
   overflow-y: auto;
