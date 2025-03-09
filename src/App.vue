@@ -11,28 +11,30 @@
         <Card>
           <template #header>
             <div class="flex align-items-center justify-content-center">
-              <Avatar icon="pi pi-user" size="xlarge" class="mr-2" />
+              <Avatar icon="pi pi-users" size="xlarge" class="mr-2" />
               <h2 class="m-0">Пациенты</h2>
             </div>
           </template>
           <template #content>
-            <div class="patient-card" @click="selectPatient(patient)">
-              <div class="patient-info">
-                <h3>{{ patient.fullName }}</h3>
-                <p><strong>Дата рождения:</strong> {{ patient.birthDate }}</p>
-                <p><strong>Номер карты:</strong> {{ patient.cardNumber }}</p>
+            <div class="patients-container">
+              <div class="patient-card" v-for="(patient, index) in patients" :key="index" @click="selectPatient(patient)">
+                <div class="patient-info">
+                  <h3>{{ patient.fullName }}</h3>
+                  <p><strong>Дата рождения:</strong> {{ patient.birthDate }}</p>
+                  <p><strong>Номер карты:</strong> {{ patient.cardNumber }}</p>
+                </div>
+                <Button label="Просмотр планов" icon="pi pi-file" class="p-button-primary" @click.stop="selectPatient(patient)" />
               </div>
-              <Button label="Просмотр планов" icon="pi pi-file" class="p-button-primary" @click="showPlans = true" />
             </div>
           </template>
         </Card>
       </div>
 
-      <div class="col-12 lg:col-8" v-if="showPlans">
+      <div class="col-12 lg:col-8" v-if="showPlans && selectedPatient">
         <Card>
           <template #header>
             <div class="flex align-items-center justify-content-center">
-              <h2 class="m-0">Планы лечения: {{ patient.fullName }}</h2>
+              <h2 class="m-0">Планы лечения: {{ selectedPatient.fullName }}</h2>
             </div>
           </template>
           <template #content>
@@ -40,7 +42,7 @@
               <TabPanel header="Ортодонтический план">
                 <div class="plan-content">
                   <h3>Ортодонтический план лечения</h3>
-                  <div v-for="(stage, index) in patient.plans.orthodontic" :key="index">
+                  <div v-for="(stage, index) in selectedPatient.plans.orthodontic" :key="index">
                     <h4>{{ stage.title }}</h4>
                     <ul>
                       <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
@@ -54,7 +56,7 @@
               <TabPanel header="Ортопедический план">
                 <div class="plan-content">
                   <h3>Ортопедический план лечения</h3>
-                  <div v-for="(stage, index) in patient.plans.orthopedic" :key="index">
+                  <div v-for="(stage, index) in selectedPatient.plans.orthopedic" :key="index">
                     <h4>{{ stage.title }}</h4>
                     <ul>
                       <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
@@ -68,7 +70,7 @@
               <TabPanel header="Терапевтический план">
                 <div class="plan-content">
                   <h3>Терапевтический план лечения</h3>
-                  <div v-for="(stage, index) in patient.plans.therapeutic" :key="index">
+                  <div v-for="(stage, index) in selectedPatient.plans.therapeutic" :key="index">
                     <h4>{{ stage.title }}</h4>
                     <ul>
                       <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
@@ -82,7 +84,7 @@
               <TabPanel header="Хирургический план">
                 <div class="plan-content">
                   <h3>Хирургический план лечения</h3>
-                  <div v-for="(stage, index) in patient.plans.surgical" :key="index">
+                  <div v-for="(stage, index) in selectedPatient.plans.surgical" :key="index">
                     <h4>{{ stage.title }}</h4>
                     <ul>
                       <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
@@ -101,146 +103,19 @@
 </template>
 
 <script>
+import { patientsList } from './data/mockData.js';
+
 export default {
   data() {
     return {
       showPlans: false,
-      patient: {
-        fullName: "Иванов Иван Иванович",
-        birthDate: "01.01.1990",
-        cardNumber: "МК-12345",
-        plans: {
-          orthodontic: [
-            {
-              title: "1. Подготовительный этап",
-              steps: [
-                "Санация полости рта (лечение кариеса, заболеваний пародонта)",
-                "Профессиональная гигиена полости рта",
-                "Обучение пациента правилам гигиены с брекет-системой",
-                "При необходимости: удаление зубов по плану лечения",
-                "При необходимости: установка временных ортодонтических мини-имплантатов"
-              ]
-            },
-            {
-              title: "2. Фиксация брекет-системы",
-              steps: [
-                "Адгезивная подготовка поверхности зубов",
-                "Позиционирование и фиксация брекетов согласно прописи",
-                "Установка первой дуги (обычно тонкая круглая NiTi)",
-                "Фиксация дуги в пазах брекетов (лигатуры/замки)",
-                "Инструктаж пациента по уходу за системой"
-              ]
-            },
-            {
-              title: "3. Этап нивелирования и выравнивания",
-              steps: [
-                "Последовательная смена дуг от тонких круглых к более толстым",
-                "Устранение ротаций и скученности зубов",
-                "Коррекция вертикального положения зубов",
-                "Выравнивание зубной дуги",
-                "Периодичность активаций: каждые 4-6 недель"
-              ]
-            }
-          ],
-          orthopedic: [
-            {
-              title: "1. Диагностический этап",
-              steps: [
-                "Анализ окклюзии и артикуляции",
-                "Оценка состояния твёрдых тканей зубов",
-                "Рентгенологическое обследование",
-                "Изготовление диагностических моделей",
-                "Фотопротокол"
-              ]
-            },
-            {
-              title: "2. Подготовительный этап",
-              steps: [
-                "Санация полости рта",
-                "Профессиональная гигиена",
-                "Эндодонтическое лечение (при необходимости)",
-                "Подготовка опорных зубов под протезирование"
-              ]
-            },
-            {
-              title: "3. Ортопедическое лечение",
-              steps: [
-                "Получение оттисков и изготовление временных конструкций",
-                "Примерка каркасов/конструкций",
-                "Фиксация постоянных ортопедических конструкций",
-                "Окклюзионная коррекция"
-              ]
-            }
-          ],
-          therapeutic: [
-            {
-              title: "1. Диагностический этап",
-              steps: [
-                "Оценка жалоб пациента",
-                "Визуальный осмотр и зондирование",
-                "Рентгенологическое обследование",
-                "Определение индексов гигиены и состояния тканей пародонта",
-                "Постановка диагноза"
-              ]
-            },
-            {
-              title: "2. Лечебный этап",
-              steps: [
-                "Профессиональная гигиена полости рта",
-                "Лечение кариеса и его осложнений",
-                "Эндодонтическое лечение",
-                "Лечение заболеваний пародонта",
-                "Восстановление анатомической формы зубов"
-              ]
-            },
-            {
-              title: "3. Профилактический этап",
-              steps: [
-                "Рекомендации по индивидуальной гигиене",
-                "Подбор средств гигиены",
-                "Назначение контрольных осмотров",
-                "Профилактика рецидивов"
-              ]
-            }
-          ],
-          surgical: [
-            {
-              title: "1. Предоперационная подготовка",
-              steps: [
-                "Комплексное обследование пациента",
-                "Консультации смежных специалистов",
-                "Лабораторные исследования",
-                "Подготовка операционного поля",
-                "Планирование хирургического вмешательства"
-              ]
-            },
-            {
-              title: "2. Оперативное вмешательство",
-              steps: [
-                "Удаление зубов по показаниям",
-                "Проведение хирургических манипуляций",
-                "Установка имплантатов (при необходимости)",
-                "Костная пластика (при необходимости)",
-                "Пластика мягких тканей"
-              ]
-            },
-            {
-              title: "3. Послеоперационный период",
-              steps: [
-                "Медикаментозная терапия",
-                "Контрольные осмотры",
-                "Снятие швов",
-                "Реабилитационные мероприятия",
-                "Подготовка к последующим этапам лечения"
-              ]
-            }
-          ]
-        }
-      }
+      selectedPatient: null,
+      patients: patientsList
     };
   },
   methods: {
     selectPatient(patient) {
+      this.selectedPatient = patient;
       this.showPlans = true;
     }
   }
@@ -248,6 +123,13 @@ export default {
 </script>
 
 <style>
+.patients-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+}
+
 .patient-card {
   display: flex;
   flex-direction: column;
@@ -257,6 +139,7 @@ export default {
   border-radius: 8px;
   transition: all 0.3s ease;
   cursor: pointer;
+  margin-bottom: 1rem;
 }
 
 .patient-card:hover {
@@ -292,5 +175,23 @@ ul {
 li {
   margin-bottom: 0.5rem;
 }
-</style>
 
+/* Настройка скроллбара */
+.patients-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.patients-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.patients-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.patients-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+</style>
