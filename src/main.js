@@ -8,9 +8,11 @@ import TabPanel from 'primevue/tabpanel';
 import Avatar from 'primevue/avatar';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import InputText from 'primevue/inputtext';
 
 // Используем только импорт primeflex локально
 import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
 
 import App from './App.vue';
 
@@ -25,5 +27,6 @@ app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
 app.component('Avatar', Avatar);
 app.component('Toast', Toast);
+app.component('InputText', InputText);
 
 app.mount('#app');

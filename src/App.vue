@@ -10,14 +10,19 @@
       <div class="col-12 lg:col-4">
         <Card>
           <template #header>
-            <div class="flex align-items-center justify-content-center">
+            <div class="flex align-items-center justify-content-center mb-3">
               <Avatar icon="pi pi-users" size="xlarge" class="mr-2" />
               <h2 class="m-0">Пациенты</h2>
             </div>
+            <SearchPatient @search="searchPatients" />
           </template>
           <template #content>
             <div class="patients-container">
-              <div class="patient-card" v-for="(patient, index) in patients" :key="index" @click="selectPatient(patient)">
+              <div v-if="filteredPatients.length === 0" class="no-results">
+                <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+                <p>Пациенты не найдены</p>
+              </div>
+              <div class="patient-card" v-for="(patient, index) in filteredPatients" :key="index" @click="selectPatient(patient)">
                 <div class="patient-info">
                   <h3>{{ patient.fullName }}</h3>
                   <p><strong>Дата рождения:</strong> {{ patient.birthDate }}</p>
@@ -104,19 +109,44 @@
 
 <script>
 import { patientsList } from './data/mockData.js';
+import SearchPatient from './components/SearchPatient.vue';
 
 export default {
+  components: {
+    SearchPatient
+  },
   data() {
     return {
       showPlans: false,
       selectedPatient: null,
-      patients: patientsList
+      patients: patientsList,
+      searchText: ''
     };
+  },
+  computed: {
+    filteredPatients() {
+      if (!this.searchText) {
+        return this.patients;
+      }
+      
+      const query = this.searchText.toLowerCase();
+      return this.patients.filter(patient => 
+        patient.fullName.toLowerCase().includes(query) || 
+        patient.cardNumber.toLowerCase().includes(query) ||
+        patient.birthDate.includes(query)
+      );
+    }
   },
   methods: {
     selectPatient(patient) {
       this.selectedPatient = patient;
       this.showPlans = true;
+    },
+    searchPatients(query) {
+      this.searchText = query;
+      if (this.filteredPatients.length === 0) {
+        this.showPlans = false;
+      }
     }
   }
 };
@@ -193,5 +223,15 @@ li {
 
 .patients-container::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #666;
+  text-align: center;
 }
 </style>
