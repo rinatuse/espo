@@ -4,10 +4,11 @@
     <Toast />
     <div class="grid">
       <div class="col-12">
-        <h1 class="text-center">Медицинская информационная система</h1>
+        <h1 class="text-center app-title">Медицинская информационная система</h1>
       </div>
 
-      <div class="col-12 lg:col-4">
+      <!-- Список пациентов -->
+      <div class="col-12 lg:col-4 md:col-5 mb-3">
         <Card>
           <template #header>
             <div class="flex align-items-center justify-content-center mb-3">
@@ -35,15 +36,97 @@
         </Card>
       </div>
 
-      <div class="col-12 lg:col-8" v-if="showPlans && selectedPatient">
+      <!-- Планы лечения -->
+      <div class="col-12 lg:col-8 md:col-7" v-if="showPlans && selectedPatient">
         <Card>
           <template #header>
-            <div class="flex align-items-center justify-content-center">
-              <h2 class="m-0">Планы лечения: {{ selectedPatient.fullName }}</h2>
+            <div class="patient-header">
+              <div class="flex align-items-center mb-2">
+                <Button 
+                  icon="pi pi-arrow-left" 
+                  class="p-button-text p-button-rounded back-button" 
+                  @click="showPlans = false" 
+                  aria-label="Назад к списку"
+                />
+                <h2 class="m-0 patient-name-header">{{ selectedPatient.fullName }}</h2>
+              </div>
             </div>
           </template>
           <template #content>
-            <TabView>
+            <!-- Мобильное представление с кнопками -->
+            <div class="mobile-plan-selector" v-if="isMobile">
+              <div class="plan-nav-buttons">
+                <Button 
+                  v-for="(planType, index) in planTypes" 
+                  :key="index"
+                  :label="planLabels[planType]"
+                  :class="['plan-button', { 'p-button-outlined': currentPlan !== planType }]"
+                  @click="currentPlan = planType"
+                />
+              </div>
+              
+              <div class="plan-content mt-3">
+                <div v-if="currentPlan === 'orthodontic'">
+                  <h3>Ортодонтический план лечения</h3>
+                  <div v-for="(stage, index) in selectedPatient.plans.orthodontic" :key="index">
+                    <h4>{{ stage.title }}</h4>
+                    <ul>
+                      <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
+                        {{ step }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div v-else-if="currentPlan === 'orthopedic'">
+                  <h3>Ортопедический план лечения</h3>
+                  <div v-for="(stage, index) in selectedPatient.plans.orthopedic" :key="index">
+                    <h4>{{ stage.title }}</h4>
+                    <ul>
+                      <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
+                        {{ step }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div v-else-if="currentPlan === 'therapeutic'">
+                  <h3>Терапевтический план лечения</h3>
+                  <div v-for="(stage, index) in selectedPatient.plans.therapeutic" :key="index">
+                    <h4>{{ stage.title }}</h4>
+                    <ul>
+                      <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
+                        {{ step }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div v-else-if="currentPlan === 'surgical'">
+                  <h3>Хирургический план лечения</h3>
+                  <div v-for="(stage, index) in selectedPatient.plans.surgical" :key="index">
+                    <h4>{{ stage.title }}</h4>
+                    <ul>
+                      <li v-for="(step, stepIndex) in stage.steps" :key="stepIndex">
+                        {{ step }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div class="back-container">
+                  <Button 
+                    icon="pi pi-arrow-left" 
+                    label="Назад к выбору" 
+                    class="p-button-secondary mt-3" 
+                    @click="showPlans = false"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <!-- Десктопное представление с табами -->
+            <TabView v-else>
               <TabPanel header="Ортодонтический план">
                 <div class="plan-content">
                   <h3>Ортодонтический план лечения</h3>
@@ -120,7 +203,16 @@ export default {
       showPlans: false,
       selectedPatient: null,
       patients: patientsList,
-      searchText: ''
+      searchText: '',
+      isMobile: false,
+      currentPlan: 'orthodontic',
+      planTypes: ['orthodontic', 'orthopedic', 'therapeutic', 'surgical'],
+      planLabels: {
+        orthodontic: 'Ортодонтический',
+        orthopedic: 'Ортопедический',
+        therapeutic: 'Терапевтический',
+        surgical: 'Хирургический'
+      }
     };
   },
   computed: {
@@ -141,13 +233,34 @@ export default {
     selectPatient(patient) {
       this.selectedPatient = patient;
       this.showPlans = true;
+      this.currentPlan = 'orthodontic'; // Сбрасываем на первый план при выборе пациента
+      
+      // На мобильных устройствах прокручиваем к планам лечения
+      if (window.innerWidth < 768) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
     },
     searchPatients(query) {
       this.searchText = query;
       if (this.filteredPatients.length === 0) {
         this.showPlans = false;
       }
+    },
+    checkScreenSize() {
+      this.isMobile = window.innerWidth < 768;
     }
+  },
+  mounted() {
+    this.checkScreenSize();
+    window.addEventListener('resize', this.checkScreenSize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.checkScreenSize);
   }
 };
 </script>
@@ -233,5 +346,97 @@ li {
   padding: 2rem;
   color: #666;
   text-align: center;
+}
+
+/* Адаптивные стили */
+@media screen and (max-width: 768px) {
+  .app-title {
+    font-size: 1.8rem;
+  }
+  
+  .patient-name-header {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .patient-card {
+    padding: 0.8rem;
+  }
+  
+  .plan-content {
+    padding: 0.5rem;
+  }
+  
+  .patients-container {
+    max-height: 50vh;
+  }
+  
+  .patient-header {
+    position: relative;
+    width: 100%;
+  }
+  
+  .back-button {
+    margin-right: 0.5rem;
+  }
+  
+  .mobile-plan-selector .plan-nav-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .mobile-plan-selector .plan-button {
+    flex: 1 1 auto;
+    min-width: calc(50% - 0.5rem);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.5rem;
+  }
+  
+  .mobile-plan-selector .back-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+  
+  /* Оптимизация вкладок для мобильных */
+  :deep(.p-tabview-nav) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  :deep(.p-tabview-nav li) {
+    margin-bottom: 0.5rem;
+  }
+  
+  :deep(.p-tabview-title) {
+    font-size: 0.9rem;
+  }
+}
+
+/* Настройки для очень маленьких экранов */
+@media screen and (max-width: 480px) {
+  .app-title {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+  }
+  
+  :deep(.p-tabview-title) {
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
 }
 </style>

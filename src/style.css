@@ -1,79 +1,82 @@
+/* Глобальные стили для добавления в style.css */
+
+/* Базовые настройки для адаптивного макета */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary-color: #2196F3;
+  --primary-dark: #0D47A1;
+  --light-gray: #e0e0e0;
+  --text-color: #213547;
+  --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
-}
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@media (max-width: 768px) {
+  #app {
+    padding: 1rem;
   }
-  a:hover {
-    color: #747bff;
+
+  .p-card {
+    margin-bottom: 1rem;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .p-card .p-card-content {
+    padding: 0.75rem;
+  }
+
+  /* Уменьшение отступов для контейнера приложения */
+  .card {
+    padding: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  #app {
+    padding: 0.5rem;
+  }
+
+  .p-card .p-card-title {
+    font-size: 1.2rem;
+  }
+
+  .p-card .p-card-content {
+    padding: 0.5rem;
+  }
+
+  /* Адаптация кнопок для маленьких экранов */
+  .p-button {
+    padding: 0.5em 1em;
+    font-size: 0.9em;
+  }
+
+  /* Уменьшение отступов внутри контейнеров */
+  .card {
+    padding: 0.5em;
+  }
+}
+
+/* Дополнительные стили для PrimeVue компонентов */
+.p-tabview .p-tabview-panels {
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .p-tabview .p-tabview-panels {
+    padding: 0.75rem;
+  }
+
+  /* Стили для TabView на мобильных устройствах */
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-tabview .p-tabview-panels {
+    padding: 0.5rem;
+  }
+
+  /* Еще более компактные вкладки для очень маленьких экранов */
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 0.5rem 0.75rem;
   }
 }

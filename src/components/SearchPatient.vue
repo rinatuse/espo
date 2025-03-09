@@ -41,6 +41,7 @@ export default {
 <style scoped>
 .search-patient-container {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .custom-search-wrapper {
@@ -53,6 +54,7 @@ export default {
   padding: 0 12px;
   transition: all 0.3s ease;
   height: 42px;
+  width: 100%;
 }
 
 .custom-search-wrapper:focus-within {
@@ -64,6 +66,7 @@ export default {
   color: #777;
   font-size: 1rem;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .custom-search-input {
@@ -86,6 +89,7 @@ export default {
   color: #777;
   font-size: 0.85rem;
   transition: color 0.2s;
+  flex-shrink: 0;
 }
 
 .clear-icon:hover {
@@ -95,5 +99,22 @@ export default {
 :deep(.p-inputtext) {
   margin: 0;
   padding: 0;
+}
+
+/* Адаптивные стили */
+@media screen and (max-width: 480px) {
+  .custom-search-wrapper {
+    height: 38px;
+    padding: 0 8px;
+  }
+  
+  .custom-search-input {
+    font-size: 13px;
+  }
+  
+  .search-icon {
+    font-size: 0.9rem;
+    margin-right: 6px;
+  }
 }
 </style>
